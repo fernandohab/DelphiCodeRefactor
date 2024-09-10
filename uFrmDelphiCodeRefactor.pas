@@ -6,17 +6,17 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ControlList, Vcl.StdCtrls, System.IOUtils,
   Vcl.ExtCtrls, FileCtrl, System.Generics.Collections, Data.DB,
-  Datasnap.DBClient, CSVParser, Vcl.ComCtrls, Vcl.CheckLst;
+  Datasnap.DBClient, Vcl.ComCtrls, Vcl.CheckLst;
 
 type
   TRegExData = record
     OriginalText: string;
-    StrToReplace: string;
+    ReplacementText: string;
   end;
 
   TRefactoringData = record
     Line: Integer;
-    OriginalText: string;
+    OriginalLineText: string;
     StrToReplace: string;
     ReplacementWord: string;
   end;
@@ -188,15 +188,15 @@ begin
   clbToUpdate.Items.Clear;
   for J := 0 to Pred(Length(RefactoringData[aFileID].FileChanges)) do
   begin
-    OriginalContent := 'Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' + RefactoringData[aFileID].FileChanges[J].OriginalText;
+    OriginalContent := 'Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' + RefactoringData[aFileID].FileChanges[J].OriginalLineText;
     lbOriginal.Items.Add(OriginalContent);
     if ckbCaseSensitive.Checked then
       ContentToChange := 'Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
-                       StringReplace(RefactoringData[aFileID].FileChanges[J].StrToReplace, RefactoringData[aFileID].FileChanges[J].OriginalText,
+                       StringReplace(RefactoringData[aFileID].FileChanges[J].StrToReplace, RefactoringData[aFileID].FileChanges[J].OriginalLineText,
                                      RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll])
     else
       ContentToChange := 'Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
-                       StringReplace(RefactoringData[aFileID].FileChanges[J].StrToReplace, RefactoringData[aFileID].FileChanges[J].OriginalText,
+                       StringReplace(RefactoringData[aFileID].FileChanges[J].OriginalLineText, RefactoringData[aFileID].FileChanges[J].StrToReplace,
                                      RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll, rfIgnoreCase]);
     clbToUpdate.Items.Add(ContentToChange);
   end;
@@ -236,12 +236,12 @@ begin
     if (CommaPos > 0) and (Lines[I].Length > 2) then
     begin
       RegExWords[_vIndex].OriginalText := Copy(Lines[I], 0, CommaPos-1);
-      RegExWords[_vIndex].StrToReplace := Copy(Lines[I], CommaPos+1, Lines[I].Length);
+      RegExWords[_vIndex].ReplacementText := Copy(Lines[I], CommaPos+1, Lines[I].Length);
     end
     else if (CommaPos = 0) and (Lines[I].Length > 3) then
     begin
       RegExWords[_vIndex].OriginalText := Lines[I];
-      RegExWords[_vIndex].StrToReplace := Lines[I];
+      RegExWords[_vIndex].ReplacementText := Lines[I];
     end
     else
     begin
@@ -328,10 +328,10 @@ begin
           RefactoringData[FileNum].FileId := FileNum;
           RefactoringData[FileNum].FileName := _FileName;
           RefactoringData[FileNum].FileChanges[LineMatchNumber].Line := FileLineNumber;
-          RefactoringData[FileNum].FileChanges[LineMatchNumber].OriginalText := Line;
-          _TextToReplace := StringReplace(Line, '\b' + RegExWords[I].OriginalText + '\b', '\b' + RegExWords[I].StrToReplace + '\b', [rfReplaceAll, rfIgnoreCase]);;
-          RefactoringData[FileNum].FileChanges[LineMatchNumber].StrToReplace := _TextToReplace;
-          RefactoringData[FileNum].FileChanges[LineMatchNumber].ReplacementWord := RegExWords[I].StrToReplace;
+          RefactoringData[FileNum].FileChanges[LineMatchNumber].OriginalLineText := Line;
+          //_TextToReplace := StringReplace(Line, '\b' + RegExWords[I].OriginalText + '\b', '\b' + RegExWords[I].StrToReplace + '\b', [rfReplaceAll, rfIgnoreCase]);;
+          RefactoringData[FileNum].FileChanges[LineMatchNumber].StrToReplace := RegExWords[I].OriginalText;
+          RefactoringData[FileNum].FileChanges[LineMatchNumber].ReplacementWord := RegExWords[I].ReplacementText;
           Inc(LineMatchNumber);
         end
         else
@@ -441,7 +441,7 @@ end;
 procedure TuFrmPrincipal.ctlRegExToBeforeDrawItem(AIndex: Integer;
   ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
 begin
-  lblRegExPara.Caption := RegExWords[AIndex].StrToReplace;
+  lblRegExPara.Caption := RegExWords[AIndex].ReplacementText;
 end;
 
 procedure TuFrmPrincipal.ctlRegExToItemClick(Sender: TObject);

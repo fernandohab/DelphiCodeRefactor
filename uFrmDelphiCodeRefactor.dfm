@@ -52,16 +52,16 @@ object uFrmPrincipal: TuFrmPrincipal
   object lblPalavrasAnalisar: TLabel
     Left = 565
     Top = 81
-    Width = 151
+    Width = 125
     Height = 15
-    Caption = 'RegEx Words to Find - From:'
+    Caption = 'RegEx Words - Original:'
   end
   object lblPalavrasAnalisarPara: TLabel
     Left = 820
     Top = 81
-    Width = 15
+    Width = 72
     Height = 15
-    Caption = 'To:'
+    Caption = 'Replacement:'
   end
   object lblConfigsRegEx: TLabel
     Left = 1071
@@ -99,9 +99,9 @@ object uFrmPrincipal: TuFrmPrincipal
   object lblArqRefatorar: TLabel
     Left = 40
     Top = 449
-    Width = 48
+    Width = 24
     Height = 15
-    Caption = 'Arquivo: '
+    Caption = 'File: '
   end
   object btnParseFiles: TButton
     Left = 1071
@@ -268,9 +268,9 @@ object uFrmPrincipal: TuFrmPrincipal
     OnKeyUp = lbOriginalKeyUp
   end
   object cbbArquivosRefatorar: TComboBox
-    Left = 94
+    Left = 70
     Top = 445
-    Width = 971
+    Width = 987
     Height = 23
     Style = csDropDownList
     DropDownCount = 10

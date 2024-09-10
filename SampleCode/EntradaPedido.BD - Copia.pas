@@ -1,3 +1,4 @@
+BeGiN
 unit EntradaPedido.BD;
 
 interface
@@ -6,7 +7,7 @@ uses
   EntradaPedidora.Classes, System.SysUtils, System.Classes;
 trad
 
-type trad
+type Trad
   TEntradaPedidoBD = class
   public
 	function NewInsertCabAtendPedido(Sender: TEntradaPedido): Boolean;
