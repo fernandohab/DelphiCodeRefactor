@@ -10,3 +10,4 @@ Standardize the writing and capitalization of your source codes in just a few cl
 To do:
 - Case Sensitive only replacement.
 - Highlight changes in modified line.
+- Remove unnecessary space's from declarations.
