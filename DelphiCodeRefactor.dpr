@@ -3,7 +3,6 @@ program DelphiCodeRefactor;
 uses
   Vcl.Forms,
   uFrmDelphiCodeRefactor in 'uFrmDelphiCodeRefactor.pas' {uFrmPrincipal},
-  CSVParser in 'CSVParser.pas',
   Vcl.Themes,
   Vcl.Styles;
 

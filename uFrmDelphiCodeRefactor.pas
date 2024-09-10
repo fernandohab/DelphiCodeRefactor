@@ -3,10 +3,25 @@ unit uFrmDelphiCodeRefactor;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ControlList, Vcl.StdCtrls, System.IOUtils,
-  Vcl.ExtCtrls, FileCtrl, System.Generics.Collections, Data.DB,
-  Datasnap.DBClient, Vcl.ComCtrls, Vcl.CheckLst;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ControlList,
+  Vcl.StdCtrls,
+  System.IOUtils,
+  Vcl.ExtCtrls,
+  FileCtrl,
+  System.Generics.Collections,
+  Data.DB,
+  Datasnap.DBClient,
+  Vcl.ComCtrls,
+  Vcl.CheckLst;
 
 type
   TRegExData = record
@@ -149,8 +164,8 @@ type
     procedure RegExFileSelector;
     procedure LoadSourceFilesFromFolder;
     procedure SetDevFolderDefaults;
-    procedure SetSourceFiles;
-    procedure NewAnalyzeFiles;
+    procedure SetSourceFilesDir;
+    procedure AnalyzeSourceAndRegExFiles;
     procedure LoadFileByID(aFileID: Integer);
   public
     { Public declarations }
@@ -163,7 +178,10 @@ implementation
 
 {$R *.dfm}
 uses
-  System.RTTI, System.StrUtils, System.RegularExpressions, Math;
+  System.RTTI,
+  System.StrUtils,
+  System.RegularExpressions,
+  Math;
 
 function TuFrmPrincipal.LengthOfRefactoringSubArrays: Integer;
 var
@@ -181,24 +199,21 @@ end;
 procedure TuFrmPrincipal.LoadFileByID(aFileID: Integer);
 var
   J: Integer;
-  OriginalContent,
-  ContentToChange: string;
+  OriginalContent: string;
 begin
   lbOriginal.Items.Clear;
   clbToUpdate.Items.Clear;
   for J := 0 to Pred(Length(RefactoringData[aFileID].FileChanges)) do
   begin
-    OriginalContent := 'Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' + RefactoringData[aFileID].FileChanges[J].OriginalLineText;
-    lbOriginal.Items.Add(OriginalContent);
+    lbOriginal.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' + RefactoringData[aFileID].FileChanges[J].OriginalLineText);
     if ckbCaseSensitive.Checked then
-      ContentToChange := 'Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
-                       StringReplace(RefactoringData[aFileID].FileChanges[J].StrToReplace, RefactoringData[aFileID].FileChanges[J].OriginalLineText,
-                                     RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll])
-    else
-      ContentToChange := 'Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
+      clbToUpdate.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
                        StringReplace(RefactoringData[aFileID].FileChanges[J].OriginalLineText, RefactoringData[aFileID].FileChanges[J].StrToReplace,
-                                     RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll, rfIgnoreCase]);
-    clbToUpdate.Items.Add(ContentToChange);
+                                     RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll]))
+    else
+      clbToUpdate.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
+                       StringReplace(RefactoringData[aFileID].FileChanges[J].OriginalLineText, RefactoringData[aFileID].FileChanges[J].StrToReplace,
+                                     RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll, rfIgnoreCase]));
   end;
   if lbOriginal.Items.Count > 0 then
     lblCtlOriginalCountValue.Caption := lbOriginal.Items.Count.ToString;
@@ -353,7 +368,7 @@ begin
   end;
 end;
 
-procedure TuFrmPrincipal.NewAnalyzeFiles;
+procedure TuFrmPrincipal.AnalyzeSourceAndRegExFiles;
 var
   I: Integer;
   ContentToAdd: string;
@@ -476,7 +491,7 @@ begin
   end;
   //AnalyzeFiles;
   LoadSourceFilesHits;
-  NewAnalyzeFiles;
+  AnalyzeSourceAndRegExFiles;
 end;
 
 procedure TuFrmPrincipal.btnRegExHelpClick(Sender: TObject);
@@ -484,8 +499,8 @@ begin
   ShowMessage('Select a 2 columns CSV file.' + sLineBreak +
               'The first column should contain the original word.' + sLineBreak +
               'The second column should contain the new word' + sLineBreak +
-              '"Ex: ' + sLineBreak +
-              'BeGiN,begin');
+              'Ex: ' + sLineBreak +
+              'SHoWmeSSAgE,ShowMessage');
 end;
 
 procedure TuFrmPrincipal.btnApplyChangesClick(Sender: TObject);
@@ -496,7 +511,7 @@ end;
 
 procedure TuFrmPrincipal.btnSelectFolderClick(Sender: TObject);
 begin
-  SetSourceFiles;
+  SetSourceFilesDir;
 end;
 
 procedure TuFrmPrincipal.SetDevFolderDefaults;
@@ -515,7 +530,7 @@ begin
   DisplayRegExWords;
 end;
 
-procedure TuFrmPrincipal.SetSourceFiles;
+procedure TuFrmPrincipal.SetSourceFilesDir;
 begin
   if SelectSourceCodeDirectory then
   begin
@@ -535,7 +550,7 @@ end;
 
 procedure TuFrmPrincipal.edtCaminhoPastaClick(Sender: TObject);
 begin
-  SetSourceFiles;
+  SetSourceFilesDir;
 end;
 
 procedure TuFrmPrincipal.FormShow(Sender: TObject);

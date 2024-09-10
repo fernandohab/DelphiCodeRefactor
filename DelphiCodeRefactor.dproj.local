@@ -4,9 +4,10 @@
     <Transaction>2023/08/30 00:45:44.000.074,=C:\Users\ferna\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>2023/09/01 08:38:46.000.288,=C:\Users\ferna\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>2024/02/25 20:49:55.000.828,=C:\Users\ferna\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2024/02/25 21:04:33.000.223,C:\Users\ferna\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.dfm=H:\DevProjects\Delphi\DelphiCodeRefactor\uFrmDelphiCodeRefactor.dfm</Transaction>
-    <Transaction>2024/02/25 21:04:33.000.223,C:\Users\ferna\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.pas=H:\DevProjects\Delphi\DelphiCodeRefactor\uFrmDelphiCodeRefactor.pas</Transaction>
-    <Transaction>2024/02/25 21:05:21.000.313,C:\Users\ferna\OneDrive\Documentos\Embarcadero\Studio\Projects\Project1.dproj=H:\DevProjects\Delphi\DelphiCodeRefactor\DelphiCodeRefactor.dproj</Transaction>
+    <Transaction>2024/02/25 21:04:33.000.223,H:\DevProjects\Delphi\DelphiCodeRefactor\uFrmDelphiCodeRefactor.dfm=C:\Users\ferna\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2024/02/25 21:04:33.000.223,H:\DevProjects\Delphi\DelphiCodeRefactor\uFrmDelphiCodeRefactor.pas=C:\Users\ferna\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2024/02/25 21:05:21.000.313,H:\DevProjects\Delphi\DelphiCodeRefactor\DelphiCodeRefactor.dproj=C:\Users\ferna\OneDrive\Documentos\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
     <Transaction>2024/03/03 21:35:30.000.746,=H:\DevProjects\Delphi\DelphiCodeRefactor\CSVParser.pas</Transaction>
+    <Transaction>2024/09/10 12:46:56.247,E:\Projects\Delphi\DelphiCodeRefactor\CSVParser.pas=</Transaction>
   </Transactions>
 </BorlandProject>
