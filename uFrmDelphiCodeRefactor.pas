@@ -96,8 +96,8 @@ type
     lblRegExDe: TLabel;
     ctlRegExTo: TControlList;
     lblRegExPara: TLabel;
-    lblPalavrasAnalisar: TLabel;
-    lblPalavrasAnalisarPara: TLabel;
+    lblCSVSearch: TLabel;
+    lblCSVReplace: TLabel;
     lblConfigsRegEx: TLabel;
     ckbRegExWholeWords: TCheckBox;
     ckbCaseSensitive: TCheckBox;
@@ -105,8 +105,8 @@ type
     lblCtlOriginalCountValue: TLabel;
     lblctlModificadoCount: TLabel;
     lblctlModificadoCountValue: TLabel;
-    clbToUpdate: TCheckListBox;
-    lbOriginal: TListBox;
+    clbCodeChanges: TCheckListBox;
+    lbCurrentCode: TListBox;
     cbbArquivosRefatorar: TComboBox;
     lblArqRefatorar: TLabel;
     ckbSelectAllToUpdate: TCheckBox;
@@ -131,21 +131,22 @@ type
     procedure btnApplyChangesClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cbbArquivosRefatorarChange(Sender: TObject);
-    procedure lbOriginalClick(Sender: TObject);
-    procedure clbToUpdateClick(Sender: TObject);
+    procedure lbCurrentCodeClick(Sender: TObject);
+    procedure clbCodeChangesClick(Sender: TObject);
     procedure DoScrollLbOriginal(Sender: TObject);
     procedure DoScrollClbAtualizar(Sender: TObject);
     procedure DoScrollCtlRegExDe(Sender: TObject);
     procedure DoScrollCtlRegExPara(Sender: TObject);
     procedure ckbSelectAllToUpdateClick(Sender: TObject);
     procedure edtCaminhoPastaClick(Sender: TObject);
-    procedure clbToUpdateKeyDown(Sender: TObject; var Key: Word;
+    procedure clbCodeChangesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure btnRegExHelpClick(Sender: TObject);
-    procedure clbToUpdateKeyUp(Sender: TObject; var Key: Word;
+    procedure clbCodeChangesKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure lbOriginalKeyUp(Sender: TObject; var Key: Word;
+    procedure lbCurrentCodeKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure btnHelpClick(Sender: TObject);
   private
     SelectedDirectory: TArray<string>;
     RegExWords: TArray<TRegExData>;
@@ -199,26 +200,25 @@ end;
 procedure TuFrmPrincipal.LoadFileByID(aFileID: Integer);
 var
   J: Integer;
-  OriginalContent: string;
 begin
-  lbOriginal.Items.Clear;
-  clbToUpdate.Items.Clear;
+  lbCurrentCode.Items.Clear;
+  clbCodeChanges.Items.Clear;
   for J := 0 to Pred(Length(RefactoringData[aFileID].FileChanges)) do
   begin
-    lbOriginal.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' + RefactoringData[aFileID].FileChanges[J].OriginalLineText);
+    lbCurrentCode.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' + RefactoringData[aFileID].FileChanges[J].OriginalLineText);
     if ckbCaseSensitive.Checked then
-      clbToUpdate.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
+      clbCodeChanges.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
                        StringReplace(RefactoringData[aFileID].FileChanges[J].OriginalLineText, RefactoringData[aFileID].FileChanges[J].StrToReplace,
                                      RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll]))
     else
-      clbToUpdate.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
+      clbCodeChanges.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
                        StringReplace(RefactoringData[aFileID].FileChanges[J].OriginalLineText, RefactoringData[aFileID].FileChanges[J].StrToReplace,
                                      RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll, rfIgnoreCase]));
   end;
-  if lbOriginal.Items.Count > 0 then
-    lblCtlOriginalCountValue.Caption := lbOriginal.Items.Count.ToString;
-  if clbToUpdate.Items.Count > 0 then
-    lblctlModificadoCountValue.Caption := clbToUpdate.Items.Count.ToString;
+  if lbCurrentCode.Items.Count > 0 then
+    lblCtlOriginalCountValue.Caption := lbCurrentCode.Items.Count.ToString;
+  if clbCodeChanges.Items.Count > 0 then
+    lblctlModificadoCountValue.Caption := clbCodeChanges.Items.Count.ToString;
 end;
 
 procedure TuFrmPrincipal.LoadSelectedRegExFile(aFileName: string);
@@ -243,6 +243,7 @@ begin
   Lines := TArray.Concat<String>([Lines, TFile.ReadAllLines(aFileName)]);
   FileLineCount := Length(Lines);
   SetLength(RegExWords, FileLineCount);
+  _vIndex := 0;
   for I := 0 to Pred(FileLineCount) do
   begin
     CommaPos := 0;
@@ -394,20 +395,20 @@ end;
 
 procedure TuFrmPrincipal.ckbSelectAllToUpdateClick(Sender: TObject);
 begin
-  clbToUpdate.CheckAll(cbUnchecked, True, False);
+  clbCodeChanges.CheckAll(cbUnchecked, True, False);
   if ckbSelectAllToUpdate.Checked then
-    clbToUpdate.CheckAll(cbChecked, True, False);
+    clbCodeChanges.CheckAll(cbChecked, True, False);
 end;
 
-procedure TuFrmPrincipal.clbToUpdateClick(Sender: TObject);
+procedure TuFrmPrincipal.clbCodeChangesClick(Sender: TObject);
 begin
-  lbOriginal.ItemIndex := clbToUpdate.ItemIndex;
-  //Color := TColor(clbToUpdate.Items.Objects[clbToUpdate.ItemIndex]);
-  //clbToUpdate.Items.Strings[0].Format()
-  TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(lbOriginal, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
+  lbCurrentCode.ItemIndex := clbCodeChanges.ItemIndex;
+  //Color := TColor(clbCodeChanges.Items.Objects[clbCodeChanges.ItemIndex]);
+  //clbCodeChanges.Items.Strings[0].Format()
+  TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(lbCurrentCode, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
 end;
 
-procedure TuFrmPrincipal.clbToUpdateKeyDown(Sender: TObject;
+procedure TuFrmPrincipal.clbCodeChangesKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
   if ((Key = Ord('A')) and (ssCtrl in Shift)) then
@@ -416,10 +417,10 @@ begin
   end;
 end;
 
-procedure TuFrmPrincipal.clbToUpdateKeyUp(Sender: TObject; var Key: Word;
+procedure TuFrmPrincipal.clbCodeChangesKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(lbOriginal, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
+  TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(lbCurrentCode, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
 end;
 
 procedure TuFrmPrincipal.ctlSourceFilesBeforeDrawItem(AIndex: Integer;
@@ -497,8 +498,8 @@ end;
 procedure TuFrmPrincipal.btnRegExHelpClick(Sender: TObject);
 begin
   ShowMessage('Select a 2 columns CSV file.' + sLineBreak +
-              'The first column should contain the original word.' + sLineBreak +
-              'The second column should contain the new word' + sLineBreak +
+              'The first column should contain the existing word.' + sLineBreak +
+              'The second column should contain the replacement word.' + sLineBreak +
               'Ex: ' + sLineBreak +
               'SHoWmeSSAgE,ShowMessage');
 end;
@@ -509,6 +510,15 @@ begin
   // to do
 end;
 
+procedure TuFrmPrincipal.btnHelpClick(Sender: TObject);
+begin
+  ShowMessage('1. Select sources folder.' + sLineBreak +
+              '2. Select RegEx CSV model.' + sLineBreak +
+              '3. Parse the selected files.' + sLineBreak +
+              '4. Select the rows you want to update.' + sLineBreak +
+              '5. Apply the changes.');
+end;
+
 procedure TuFrmPrincipal.btnSelectFolderClick(Sender: TObject);
 begin
   SetSourceFilesDir;
@@ -517,10 +527,10 @@ end;
 procedure TuFrmPrincipal.SetDevFolderDefaults;
 begin
   SetLength(SelectedDirectory, 1);
-  SelectedDirectory[0] := 'E:\Projects\Delphi\DelphiCodeRefactor\SampleCode';
+  SelectedDirectory[0] := 'E:\Projects\Delphi\DelphiCodeRefactor\CodeSamples';
   edtCaminhoPasta.Text := SelectedDirectory[0];
   DisplaySourceFiles;
-  edtArqCSVRegEx.Text := 'E:\Projects\Delphi\DelphiCodeRefactor\Models\WordsReplace.txt';
+  edtArqCSVRegEx.Text := 'E:\Projects\Delphi\DelphiCodeRefactor\Models\DelphiStd.txt';
   DisplayRegExWords;
 end;
 
@@ -555,11 +565,13 @@ end;
 
 procedure TuFrmPrincipal.FormShow(Sender: TObject);
 begin
-  lbOriginal.OnScroll := DoScrollLbOriginal;
-  clbToUpdate.OnScroll := DoScrollClbAtualizar;
+  lbCurrentCode.OnScroll := DoScrollLbOriginal;
+  clbCodeChanges.OnScroll := DoScrollClbAtualizar;
   ctlRegExFrom.OnScroll := DoScrollCtlRegExDe;
   ctlRegExTo.OnScroll := DoScrollCtlRegExPara;
   SetDevFolderDefaults;
+  if ((ctlSourceFiles.ItemCount > 0) and (ctlRegExFrom.ItemCount > 0) and (ctlRegExTo.ItemCount > 0)) then
+    btnParseFiles.Click;
 end;
 
 function TuFrmPrincipal.GetFullLengthOfRefactoringData: Integer;
@@ -571,23 +583,23 @@ begin
   except
     on E: Exception do
     begin
-      Result := 0; 
+      Result := 0;
       ShowMessage('Failed GetFullLengthOfRefactoringData');
     end;
   end;
 end;
 
-procedure TuFrmPrincipal.lbOriginalClick(Sender: TObject);
+procedure TuFrmPrincipal.lbCurrentCodeClick(Sender: TObject);
 begin
-  clbToUpdate.ItemIndex := lbOriginal.ItemIndex;
-  TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(clbToUpdate, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
+  clbCodeChanges.ItemIndex := lbCurrentCode.ItemIndex;
+  TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(clbCodeChanges, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
 end;
 
-procedure TuFrmPrincipal.lbOriginalKeyUp(Sender: TObject; var Key: Word;
+procedure TuFrmPrincipal.lbCurrentCodeKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  clbToUpdate.ItemIndex := lbOriginal.ItemIndex;
-  TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(clbToUpdate, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
+  clbCodeChanges.ItemIndex := lbCurrentCode.ItemIndex;
+  TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(clbCodeChanges, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
 end;
 
 procedure TuFrmPrincipal.DisplaySourceFiles;
@@ -602,9 +614,9 @@ end;
 
 procedure TuFrmPrincipal.DoScrollClbAtualizar(Sender: TObject);
 begin
-  if (clbToUpdate.TopIndex > clbToUpdate.ItemIndex) then
-    clbToUpdate.ItemIndex := clbToUpdate.TopIndex;
-  lbOriginal.TopIndex := clbToUpdate.TopIndex;
+  if (clbCodeChanges.TopIndex > clbCodeChanges.ItemIndex) then
+    clbCodeChanges.ItemIndex := clbCodeChanges.TopIndex;
+  lbCurrentCode.TopIndex := clbCodeChanges.TopIndex;
 end;
 
 procedure TuFrmPrincipal.DoScrollCtlRegExDe(Sender: TObject);
@@ -619,14 +631,14 @@ end;
 
 procedure TuFrmPrincipal.DoScrollLbOriginal(Sender: TObject);
 begin
-  clbToUpdate.TopIndex := lbOriginal.TopIndex;
-  clbToUpdate.ItemIndex := clbToUpdate.TopIndex;
-  //TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(clbToUpdate, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
+  clbCodeChanges.TopIndex := lbCurrentCode.TopIndex;
+  clbCodeChanges.ItemIndex := clbCodeChanges.TopIndex;
+  //TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(clbCodeChanges, TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Sender).AsInteger);
 end;
 
 function TuFrmPrincipal.SelectSourceCodeDirectory: Boolean;
 begin
-  Result := SelectDirectory('E:\Projects\Delphi\DelphiCodeRefactor\SampleCode', SelectedDirectory, [], 'Select a path', 'Path:','Confirm');
+  Result := SelectDirectory('E:\Projects\Delphi\DelphiCodeRefactor\CodeSamples', SelectedDirectory, [], 'Select a path', 'Path:','Confirm');
 end;
 
 { TListBox }
@@ -635,18 +647,14 @@ function TListBox.DoMouseWheel(_Shift: TShiftState; _WheelDelta: Integer; _Mouse
 var
   Idx: Integer;
 begin
-  // calculate the index of the item to select
+  Result := False;
   Idx := ItemIndex - Sign(_WheelDelta);
   if Idx >= Items.Count then
     Idx := Items.Count
   else if Idx < 0 then
     Idx := 0;
-  // select it
   ItemIndex := Idx;
-  // and simulate a mouse click on it so the selected table gets displayed
   Self.Click;
-
-  // tell the caller that the event has been handled
   Result := True;
 end;
 
@@ -659,23 +667,18 @@ end;
 
 { TCheckListBox }
 
-function TCheckListBox.DoMouseWheel(_Shift: TShiftState;
-  _WheelDelta: Integer; _MousePos: TPoint): Boolean;
+function TCheckListBox.DoMouseWheel(_Shift: TShiftState; _WheelDelta: Integer; _MousePos: TPoint): Boolean;
 var
   Idx: Integer;
 begin
-  // calculate the index of the item to select
+  Result := False;
   Idx := ItemIndex - Sign(_WheelDelta);
   if Idx >= Items.Count then
     Idx := Items.Count
   else if Idx < 0 then
     Idx := 0;
-  // select it
   ItemIndex := Idx;
-  // and simulate a mouse click on it so the selected table gets displayed
   Self.Click;
-
-  // tell the caller that the event has been handled
   Result := True;
 end;
 
@@ -688,23 +691,54 @@ end;
 
 { TControlList }
 
-function TControlList.DoMouseWheel(_Shift: TShiftState;
-  _WheelDelta: Integer; _MousePos: TPoint): Boolean;
+function TControlList.DoMouseWheel(_Shift: TShiftState; _WheelDelta: Integer; _MousePos: TPoint): Boolean;
 var
   Idx: Integer;
 begin
-  // calculate the index of the item to select
-  Idx := ItemIndex - Sign(_WheelDelta);
+  Result := False;
+  Idx := ItemIndex  - Sign(_WheelDelta);
   if Idx >= ItemCount then
     Idx := ItemCount
   else if Idx < 0 then
-    Idx := 0;
-  // select it
-  ItemIndex := Idx;
-  // and simulate a mouse click on it so the selected table gets displayed
+    Idx := 0
+  else
+    ItemIndex := Idx;
+ // ShowMessage(TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger.ToString);
+  if Self.Name = 'ctlRegExTo' then
+  begin
+    uFrmPrincipal.ctlRegExFrom.ItemIndex := uFrmPrincipal.ctlRegExTo.ItemIndex;
+    if (TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger = 0) and (_WheelDelta > 0) then
+      TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(uFrmPrincipal.ctlRegExFrom, 0)
+    else if (((Self.ItemIndex <> 0) and
+        (Self.ItemIndex <> Pred(Self.ItemCount)) and
+        //(TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger > 0) or // Top blank item creation avoidance
+        (TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger >= Self.ItemHeight) and
+        (TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger < ((Self.ItemCount*Self.ItemHeight)-Self.Height))) or
+        (TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger = 0) and
+        (_WheelDelta < 0)) then // Bottom blank item creation avoidance
+      TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(uFrmPrincipal.ctlRegExFrom,
+                                                                                TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger+IfThen(Sign(_WheelDelta) > 0,
+                                                                                                                                                                                 -Self.ItemHeight,
+                                                                                                                                                                                 Self.ItemHeight));
+  end
+  else
+  begin
+    uFrmPrincipal.ctlRegExTo.ItemIndex := uFrmPrincipal.ctlRegExFrom.ItemIndex;
+    if (TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger = 0) and (_WheelDelta > 0) then
+      TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(uFrmPrincipal.ctlRegExTo, 0)
+    else if (((Self.ItemIndex <> 0) and
+        (Self.ItemIndex <> Pred(Self.ItemCount)) and
+        //(TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger > 0) or // Top blank item creation avoidance
+        (TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger >= Self.ItemHeight) and
+        (TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger < ((Self.ItemCount*Self.ItemHeight)-Self.Height))) or
+        (TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger = 0) and
+        (_WheelDelta < 0)) then // Bottom blank item creation avoidance
+      TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').SetValue(uFrmPrincipal.ctlRegExTo,
+                                                                                TRttiContext.Create.GetType(TControlList).GetField('FScrollPos').GetValue(Self).AsInteger+IfThen(Sign(_WheelDelta) > 0,
+                                                                                                                                                                                 -Self.ItemHeight,
+                                                                                                                                                                                 Self.ItemHeight));
+  end;
   Self.Click;
-
-  // tell the caller that the event has been handled
   Result := True;
 end;
 

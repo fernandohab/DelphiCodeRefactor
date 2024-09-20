@@ -27,12 +27,6 @@ Coordinates=18,87,117,58
 [lblCaminhoModelos]
 Coordinates=520,78,128,58
 
-[lblPalavrasAnalisar]
-Coordinates=686,78,125,58
-
-[lblPalavrasAnalisarPara]
-Coordinates=495,155,152,58
-
 [lblRegExDe]
 Coordinates=312,279,82,58
 
@@ -69,4 +63,10 @@ Coordinates=0,0,125,58
 
 [ckbCaseSensitive]
 Coordinates=401,279,114,58
+
+[lblCSVReplace]
+Coordinates=495,155,152,58
+
+[lblCSVSearch]
+Coordinates=686,78,125,58
 

@@ -17,51 +17,51 @@ object uFrmPrincipal: TuFrmPrincipal
   object lblOriginal: TLabel
     Left = 40
     Top = 482
-    Width = 72
+    Width = 43
     Height = 15
-    Caption = 'Current code:'
+    Caption = 'Current:'
   end
   object lblSugestAtualizar: TLabel
     Left = 573
     Top = 482
-    Width = 77
+    Width = 49
     Height = 15
-    Caption = 'Updated code:'
+    Caption = 'Changes:'
   end
   object lblPasta: TLabel
     Left = 36
     Top = 22
-    Width = 75
+    Width = 73
     Height = 15
-    Caption = 'Source Folder:'
+    Caption = 'Source folder:'
   end
   object lblCaminhoModelos: TLabel
     Left = 564
     Top = 22
-    Width = 101
+    Width = 96
     Height = 15
-    Caption = 'RegEx CSV models:'
+    Caption = 'RegEx CSV model:'
   end
   object lblFontes: TLabel
     Left = 36
     Top = 81
-    Width = 65
+    Width = 63
     Height = 15
-    Caption = 'Source Files:'
+    Caption = 'Source files:'
   end
-  object lblPalavrasAnalisar: TLabel
+  object lblCSVSearch: TLabel
     Left = 565
     Top = 81
-    Width = 125
+    Width = 48
     Height = 15
-    Caption = 'RegEx Words - Original:'
+    Caption = 'Find this:'
   end
-  object lblPalavrasAnalisarPara: TLabel
+  object lblCSVReplace: TLabel
     Left = 820
     Top = 81
-    Width = 72
+    Width = 58
     Height = 15
-    Caption = 'Replacement:'
+    Caption = 'Replace to:'
   end
   object lblConfigsRegEx: TLabel
     Left = 1071
@@ -142,9 +142,9 @@ object uFrmPrincipal: TuFrmPrincipal
     OnClick = btnApplyChangesClick
   end
   object edtArqCSVRegEx: TEdit
-    Left = 560
+    Left = 561
     Top = 40
-    Width = 505
+    Width = 504
     Height = 23
     HelpType = htKeyword
     HelpKeyword = 'Click to select a file'
@@ -242,7 +242,7 @@ object uFrmPrincipal: TuFrmPrincipal
     Caption = 'Case Sensitive'
     TabOrder = 10
   end
-  object clbToUpdate: TCheckListBox
+  object clbCodeChanges: TCheckListBox
     Left = 565
     Top = 503
     Width = 500
@@ -253,19 +253,19 @@ object uFrmPrincipal: TuFrmPrincipal
     ParentCtl3D = False
     Style = lbOwnerDrawFixed
     TabOrder = 11
-    OnClick = clbToUpdateClick
-    OnKeyDown = clbToUpdateKeyDown
-    OnKeyUp = clbToUpdateKeyUp
+    OnClick = clbCodeChangesClick
+    OnKeyDown = clbCodeChangesKeyDown
+    OnKeyUp = clbCodeChangesKeyUp
   end
-  object lbOriginal: TListBox
+  object lbCurrentCode: TListBox
     Left = 32
     Top = 503
     Width = 505
     Height = 370
     ItemHeight = 15
     TabOrder = 12
-    OnClick = lbOriginalClick
-    OnKeyUp = lbOriginalKeyUp
+    OnClick = lbCurrentCodeClick
+    OnKeyUp = lbCurrentCodeKeyUp
   end
   object cbbArquivosRefatorar: TComboBox
     Left = 70
@@ -308,5 +308,6 @@ object uFrmPrincipal: TuFrmPrincipal
     Height = 16
     Caption = '?'
     TabOrder = 16
+    OnClick = btnHelpClick
   end
 end
