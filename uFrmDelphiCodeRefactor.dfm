@@ -17,9 +17,9 @@ object uFrmPrincipal: TuFrmPrincipal
   object lblOriginal: TLabel
     Left = 40
     Top = 482
-    Width = 43
+    Width = 37
     Height = 15
-    Caption = 'Current:'
+    Caption = 'Found:'
   end
   object lblSugestAtualizar: TLabel
     Left = 573
@@ -65,7 +65,7 @@ object uFrmPrincipal: TuFrmPrincipal
   end
   object lblConfigsRegEx: TLabel
     Left = 1071
-    Top = 171
+    Top = 158
     Width = 79
     Height = 15
     Caption = 'RegEx Configs:'
@@ -105,7 +105,7 @@ object uFrmPrincipal: TuFrmPrincipal
   end
   object btnParseFiles: TButton
     Left = 1071
-    Top = 107
+    Top = 106
     Width = 110
     Height = 36
     Caption = 'Parse Files'
@@ -134,7 +134,7 @@ object uFrmPrincipal: TuFrmPrincipal
   end
   object btnApplyChanges: TButton
     Left = 1071
-    Top = 544
+    Top = 556
     Width = 110
     Height = 31
     Caption = 'Apply'
@@ -225,7 +225,7 @@ object uFrmPrincipal: TuFrmPrincipal
   end
   object ckbRegExWholeWords: TCheckBox
     Left = 1071
-    Top = 192
+    Top = 179
     Width = 97
     Height = 17
     Caption = 'Whole Words'
@@ -236,7 +236,7 @@ object uFrmPrincipal: TuFrmPrincipal
   end
   object ckbCaseSensitive: TCheckBox
     Left = 1071
-    Top = 216
+    Top = 203
     Width = 113
     Height = 17
     Caption = 'Case Sensitive'
@@ -285,7 +285,7 @@ object uFrmPrincipal: TuFrmPrincipal
   end
   object ckbSelectAllToUpdate: TCheckBox
     Left = 1071
-    Top = 514
+    Top = 505
     Width = 97
     Height = 17
     Caption = 'Select &All'
@@ -309,5 +309,16 @@ object uFrmPrincipal: TuFrmPrincipal
     Caption = '?'
     TabOrder = 16
     OnClick = btnHelpClick
+  end
+  object ckbMakeBackup: TCheckBox
+    Left = 1071
+    Top = 530
+    Width = 97
+    Height = 17
+    Caption = 'Make Backup'
+    Checked = True
+    State = cbChecked
+    TabOrder = 17
+    OnClick = ckbSelectAllToUpdateClick
   end
 end

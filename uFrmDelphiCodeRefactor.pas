@@ -25,7 +25,7 @@ uses
 
 type
   TRegExData = record
-    OriginalText: string;
+    ExistingText: string;
     ReplacementText: string;
   end;
 
@@ -33,7 +33,7 @@ type
     Line: Integer;
     OriginalLineText: string;
     StrToReplace: string;
-    ReplacementWord: string;
+    ReplacingWord: string;
   end;
 
   TRefactoringFile = record
@@ -112,6 +112,7 @@ type
     ckbSelectAllToUpdate: TCheckBox;
     btnRegExHelp: TButton;
     btnHelp: TButton;
+    ckbMakeBackup: TCheckBox;
     procedure btnSelectFolderClick(Sender: TObject);
     procedure btnParseFilesClick(Sender: TObject);
     procedure edtArqCSVRegExClick(Sender: TObject);
@@ -158,6 +159,7 @@ type
     function SelectRegExFileDlg: string;
     function LengthOfRefactoringSubArrays: Integer;
     function GetFullLengthOfRefactoringData: Integer;
+    function ApplyChanges: Boolean;
     procedure DisplaySourceFiles;
     procedure DisplayRegExWords;
     procedure LoadSelectedRegExFile(aFileName: string);
@@ -209,11 +211,11 @@ begin
     if ckbCaseSensitive.Checked then
       clbCodeChanges.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
                        StringReplace(RefactoringData[aFileID].FileChanges[J].OriginalLineText, RefactoringData[aFileID].FileChanges[J].StrToReplace,
-                                     RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll]))
+                                     RefactoringData[aFileID].FileChanges[J].ReplacingWord, [rfReplaceAll]))
     else
       clbCodeChanges.Items.Add('Line ' + RefactoringData[aFileID].FileChanges[J].Line.ToString + ' - ' +
                        StringReplace(RefactoringData[aFileID].FileChanges[J].OriginalLineText, RefactoringData[aFileID].FileChanges[J].StrToReplace,
-                                     RefactoringData[aFileID].FileChanges[J].ReplacementWord, [rfReplaceAll, rfIgnoreCase]));
+                                     RefactoringData[aFileID].FileChanges[J].ReplacingWord, [rfReplaceAll, rfIgnoreCase]));
   end;
   if lbCurrentCode.Items.Count > 0 then
     lblCtlOriginalCountValue.Caption := lbCurrentCode.Items.Count.ToString;
@@ -251,12 +253,12 @@ begin
     _vIndex := I - DelCount;
     if (CommaPos > 0) and (Lines[I].Length > 2) then
     begin
-      RegExWords[_vIndex].OriginalText := Copy(Lines[I], 0, CommaPos-1);
+      RegExWords[_vIndex].ExistingText := Copy(Lines[I], 0, CommaPos-1);
       RegExWords[_vIndex].ReplacementText := Copy(Lines[I], CommaPos+1, Lines[I].Length);
     end
     else if (CommaPos = 0) and (Lines[I].Length > 3) then
     begin
-      RegExWords[_vIndex].OriginalText := Lines[I];
+      RegExWords[_vIndex].ExistingText := Lines[I];
       RegExWords[_vIndex].ReplacementText := Lines[I];
     end
     else
@@ -267,7 +269,7 @@ begin
   end;
   if DelCount > 0 then
   begin
-    while RegExWords[Length(RegExWords)-1].OriginalText = '' do
+    while RegExWords[Length(RegExWords)-1].ExistingText = '' do
       SetLength(RegExWords, Length(RegExWords)-1);
   end;
 end;
@@ -337,7 +339,7 @@ begin
       var LenX := Pred(Length(RegExWords));
       for I := 0 to LenX do
       begin
-        if TRegEx.Match(Line, '\b' + RegExWords[I].OriginalText + '\b', [roIgnoreCase]).Success then
+        if TRegEx.Match(Line, '\b' + RegExWords[I].ExistingText + '\b', [roIgnoreCase]).Success then
         begin
           SetLength(RefactoringData[FileNum].FileChanges, Length(RefactoringData[FileNum].FileChanges)+1);
           LineNum := FileLineNumber - DelLineCount;
@@ -345,9 +347,9 @@ begin
           RefactoringData[FileNum].FileName := _FileName;
           RefactoringData[FileNum].FileChanges[LineMatchNumber].Line := FileLineNumber;
           RefactoringData[FileNum].FileChanges[LineMatchNumber].OriginalLineText := Line;
-          //_TextToReplace := StringReplace(Line, '\b' + RegExWords[I].OriginalText + '\b', '\b' + RegExWords[I].StrToReplace + '\b', [rfReplaceAll, rfIgnoreCase]);;
-          RefactoringData[FileNum].FileChanges[LineMatchNumber].StrToReplace := RegExWords[I].OriginalText;
-          RefactoringData[FileNum].FileChanges[LineMatchNumber].ReplacementWord := RegExWords[I].ReplacementText;
+          //_TextToReplace := StringReplace(Line, '\b' + RegExWords[I].ExistingText + '\b', '\b' + RegExWords[I].StrToReplace + '\b', [rfReplaceAll, rfIgnoreCase]);;
+          RefactoringData[FileNum].FileChanges[LineMatchNumber].StrToReplace := RegExWords[I].ExistingText;
+          RefactoringData[FileNum].FileChanges[LineMatchNumber].ReplacingWord := RegExWords[I].ReplacementText;
           Inc(LineMatchNumber);
         end
         else
@@ -436,7 +438,7 @@ end;
 procedure TuFrmPrincipal.ctlRegExFromBeforeDrawItem(AIndex: Integer;
   ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
 begin
-  lblRegExDe.Caption := RegExWords[AIndex].OriginalText;
+  lblRegExDe.Caption := RegExWords[AIndex].ExistingText;
 end;
 
 procedure TuFrmPrincipal.ctlRegExFromItemClick(Sender: TObject);
@@ -504,10 +506,26 @@ begin
               'SHoWmeSSAgE,ShowMessage');
 end;
 
+function TuFrmPrincipal.ApplyChanges: Boolean;
+begin
+  ShowMessage('Under development');
+  //while RefactoringData[].FileChanges[].Selected and line in RefactoringData[].FileChanges[].Line
+  //if ckbMakeBackup.Checked then
+  //if not RenameFile(fileName,fileName + '_bkp') then
+  //begin
+  //  ErrorMsg('Error renaming file!');
+  //  if MessageDlg('Continue withou backup?',
+  //                mtConfirmation, [mbYes, mbNo], 0, mbYes) = mrYes then
+  //    WriteLines(fileName);
+end;
+
 procedure TuFrmPrincipal.btnApplyChangesClick(Sender: TObject);
 begin
-  ShowMessage('Under development... Msg: Confirm update?');
-  // to do
+  if MessageDlg('Confirm changes?',
+                mtConfirmation, [mbYes, mbNo], 0, mbYes) = mrYes then
+  begin
+    ApplyChanges;
+  end;
 end;
 
 procedure TuFrmPrincipal.btnHelpClick(Sender: TObject);

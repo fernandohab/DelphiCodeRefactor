@@ -6,17 +6,19 @@ Preview:
 ![](https://i.imgur.com/LYX5DWO.jpeg)
 
 Useful things:
-- Fully synchronized TControlList mouse scroll and ~~scrollbar~~ with RTTI.
+- Fully synchronized TControlList mouse scroll ~~and scrollbar~~ with RTTI.
 - ~~Almost~~-Fully synchronized TListBox and TCheckListBox mouse scroll and scrollbar with RTTI.
 - ~~Detached~~ basic CSV parser.
 
 
 
 To do:
-- Refactor "if Self.Name" from "DoMouseWheel" function, add runtime selection from Sender or smth like and set modifications to all others lists of same type.
-- Add visual update to TControlList's while other change.
+- Add post-processing file presentation
+- Apply OO project standards like Facade, Singleton and Abstract Factory;
+- Add visual update while the synced TControlList's scrollbar changes.
 - Sync item selection while scrolling the bar from bottom to top.
 - Add TListBox top item selection while scrolling the scrollbar from top to bottom (like the TCheckListBox).
+- Refactor "if Self.Name" from "DoMouseWheel" function by adding runtime selection from Sender or smth like and set modifications to all others list of same type.
 - Case Sensitive search mode.
 - Highlight changes in modified line.
 - Function to remove unnecessary space's from declarations before ";" (semicolon).
@@ -26,4 +28,4 @@ To do:
 - Add source code expanding search button.
 
 
-Written in Object-Pascal on Delphi 12.1.
+Written in Object-Pascal - Delphi 12.1.
